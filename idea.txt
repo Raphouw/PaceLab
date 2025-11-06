@@ -1,0 +1,36 @@
+I) Globaliser tous nos idéés différente sur une page d'accueil en mode portfolio
+
+II) Système de notation d'effort : 
+    On prévoit l'effort optimal en avance grace à la simulation sur tous les segments
+    On fait notre sortie avec l'effort réel
+    On compare segments par segments : 
+        1) La puissance
+        2) La moyenne
+    On attribue une note pour chaque critèr
+    e :
+        Si on est à la moitié (resp. double) On est à 0/100
+        si on est pile à la prévision OU +-10% On est à 100/100
+        Après on décroit de façon linéaire entre +-10% exclu jusqu'à la motié/double pour noter.
+    Ensuite, la puissance et quand même plus importante que la vitesse moyenne, donc on a pour chaque segment :
+        (3*NotePuissanceSegment + 1*NoteVitesseSegment)/4 =  Note globale du segment.
+    On fait la moyenne de tous les segments avec peut être exclusion de certains segments trop court ou trop biaisé
+
+    => Note de gestion de la ride /100 à la fin
+   
+
+III) Graphique de prédiction d'évoluiton de la vitesse moyenne en fonction du temps prévu
+     en amont grâce à la prédiction des segments.
+     Superposer à cela le profile altimétrique
+
+IV) Graphique des kcal brulée au court de la sortie en fonction du temps. 
+    (Option de voir ou non avec ou sans apport énrgétique).
+
+V) Générateur de profil comme sur les profils des etape du tour de france
+   Même design
+
+VI) Quand on clique sur un segment ca met son profil altimetrique et quand on sort du segment ça remet le profil altimetrique global
+
+
+
+
+

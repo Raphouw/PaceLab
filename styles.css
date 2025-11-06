@@ -1,0 +1,1317 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #121212;
+  color: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+header {
+  flex-direction: row;
+  background: #1e1e1e;
+  padding: 1em 2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+#stageProfileChart {
+  border-radius: 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.4em;
+}
+
+input[type="file"] {
+  background: #2a2a2a;
+  color: #ddd;
+  border: none;
+  padding: 0.5em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#map {
+  flex: 1;
+  height: 60vh;
+  width: 100%;
+}
+
+#dashboard {
+  display: none; 
+}
+
+.preview-container {
+    height: 80px;
+    background: #222;
+    margin-top: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #333;
+    position: relative;
+    
+    /* CORRECTION: Ne jamais rétrécir */
+    flex-shrink: 0;
+}
+
+.preview-controls {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    gap: 5px;
+}
+
+.toggle-preview-btn {
+    background: #555;
+    border: none;
+    border-radius: 3px;
+    padding: 2px 5px;
+    font-size: 10px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.2s;
+}
+
+.toggle-preview-btn:hover {
+    background: #666;
+}
+
+.toggle-preview-btn.active {
+    background: #ff9100;
+}
+
+
+main {
+  /* La 'main' prend toute la place restante */
+  flex: 1;
+  overflow: hidden; /* Empêche le débordement */
+}
+
+#app-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+/* === Colonne de GAUCHE (Contrôles) === */
+#sidebar {
+  width: 320px; /* Largeur fixe pour les contrôles */
+  background: #181818;
+  padding: 1rem;
+  overflow-y: auto; /* Scroll si trop de contrôles */
+  border-right: 1px solid #333;
+}
+#sidebar .card {
+  width: auto; /* Prend 100% de la sidebar */
+  margin-bottom: 1rem;
+}
+#sidebar label {
+  font-size: 0.9em;
+  margin-top: 0.5rem;
+  display: block;
+  font-weight: 600; /* Plus visible */
+  color: #d1d1d1;
+}
+#sidebar .slider-value {
+  color: #ccc; /* Valeur en gris clair */
+  font-weight: normal;
+}
+
+
+/* --- Styles pour SELECT (Menus déroulants) --- */
+select {
+    appearance: none; /* Cache l'icône de flèche par défaut */
+    background: #2a2a2a;
+    color: #f2f2f2;
+    border: 1px solid #333;
+    padding: 0.6em 1em;
+    border-radius: 6px;
+    width: 100%;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: border-color 0.2s;
+    /* Flèche customisée */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23ff9100' d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.121z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%, 0 0;
+    background-size: 0.65em auto, 100%;
+}
+
+select:hover {
+    border-color: #ff9100;
+}
+
+select option {
+    background: #181818;
+    color: #f2f2f2;
+}
+
+/* === Colonne de DROITE (Carte + Liste) === */
+#content {
+  flex: 1; /* Prend tout le reste de la place */
+  display: flex;
+  flex-direction: column; /* Carte en haut, liste en bas */
+}
+
+#map {
+  flex: 1; /* La carte prend toute la place dispo en hauteur */
+  min-height: 300px; /* Hauteur minimale */
+  background: #555; /* Fond en attendant le chargement */
+}
+
+/* === NOUVELLE LISTE DE SEGMENTS === */
+#segmentListContainer {
+  flex-basis: 230px; /* Hauteur fixe pour la liste */
+  overflow-y: auto; /* Scrollable */
+  border-top: 2px solid #333;
+  background: #1e1e1e;
+}
+
+#segmentTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#segmentTable thead th {
+  position: sticky; /* En-tête fixe */
+  top: 0;
+  background: #333;
+  color: #ff9100;
+  padding: 8px;
+  font-size: 0.85em;
+  text-align: left;
+}
+
+#segmentTable tbody tr {
+  cursor: pointer;
+  border-bottom: 1px solid #333;
+  transition: background-color 0.2s;
+}
+#segmentTable tbody tr:hover {
+  background-color: #444;
+}
+
+/* La ligne surlignée (par JS) */
+#segmentTable tbody tr.highlighted {
+  background-color: #523a1a; /* Orange foncé */
+  font-weight: bold;
+}
+
+#segmentTable tbody td {
+  padding: 8px;
+  font-size: 0.9em;
+}
+
+.card {
+  background: #222;
+  border-radius: 10px;
+  padding: 1em 1.5em;
+  margin: 0.5em;
+  width: 300px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.card2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1.0em; 
+  font: 600 0.9em 'Inter', sans-serif;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5); 
+  padding: 0.2em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  width: fit-content;
+  height: 3em;
+  position: fixed;
+  top: 93px;
+  left: calc(375px + 2em);;
+  z-index: 1000;
+  background-color: #000000b8;
+}
+
+.card1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1.0em; 
+  font: 600 0.9em 'Inter', sans-serif;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5); 
+  padding: 0.2em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  width: fit-content;
+  height: 3em;
+  position: fixed;
+  bottom: 15px;
+  left: calc(350px + 2em);;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.card1.toggled {
+    /* Un fond gris clair. !important est nécessaire pour 
+       écraser les styles .mode1, .mode2 etc. */
+    background: #00000020 !important; 
+    cursor: pointer;
+
+    /* Il faut aussi changer la couleur du texte pour qu'il soit lisible */
+    color: #807f7f !important;
+}
+
+.mode1 .card1 {
+  background-color: #000000;
+  color: #ffffff;
+}
+.mode2 .card1 {
+  background-color: #000000; /* Cyan-Vert */
+  color: #fff;
+}
+.mode3 .card1 {
+  background-color: #000000;
+  color: #fff;
+}
+.mode4 .card1 {
+  background-color: #000000;
+  color: #ffffff;
+}
+.mode5 .card1 {
+  background: linear-gradient(90deg, #ff6a00, #ff9100);
+  color: #000000;
+}
+
+h2 {
+  font-size: 1.1em;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.3em;
+  margin-bottom: 0.6em;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #e90796;
+  margin: 0.3em 0;
+}
+
+button {
+  background: linear-gradient(90deg, #ff6a00, #ff9100);
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 0.6em;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+
+
+#profilTDF {
+  background: linear-gradient(90deg, #ff6a00, #ff9100);
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+  width: auto;
+  margin: 0.6em auto;
+  display: block;
+  margin-right: 00px;
+}
+
+#profilTDF:hover {
+  transform: scale(1.03);
+  background: linear-gradient(90deg, #ff9100, #ffb300);
+}
+
+button:hover {
+  transform: scale(1.03);
+  background: linear-gradient(90deg, #ff9100, #ffb300);
+}
+
+/* ======================================
+STYLES DE LA MODALE (POP-UP)
+======================================
+*/
+.modal-overlay {
+  display: none; /* Caché par défaut */
+  position: fixed; /* Reste en place */
+  z-index: 20000; /* Au-dessus de tout */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Fond noir semi-transparent */
+  
+  /* Centrer le contenu (flexbox) */
+  align-items: center;
+  justify-content: center;
+}
+
+#comparisonPage {
+    z-index: 21000 !important;
+}
+
+#climbCompareModal {
+    z-index: 22000 !important;
+}
+
+#gpxLibraryModal {
+  z-index: 25000 !important;
+}
+
+/* Classe JS pour afficher la modale */
+.modal-overlay.visible {
+  display: flex;
+}
+
+.modal-content {
+  background-color: #222; /* Fond sombre (match ton UI) */
+  border: 1px solid #444;
+  padding: 20px 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 1200px; /* Largeur max */
+  max-height: 90vh; /* Hauteur max */
+  overflow-y: auto; /* Scroll si le contenu est trop grand */
+  position: relative;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+}
+
+
+.modal-overlay1 {
+  display: none; /* Caché par défaut */
+  position: fixed; /* Reste en place */
+  z-index: 10001; /* Au-dessus de tout */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(30, 30, 30, 0.7); /* Fond noir semi-transparent */
+  
+  /* Centrer le contenu (flexbox) */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Classe JS pour afficher la modale */
+.modal-overlay1.visible {
+  display: flex;
+}
+
+.modal1-content {
+  background-color: rgba(255, 255, 255, 0.7); /* Fond sombre (match ton UI) */
+  border: 1px solid #444;
+  padding: 20px 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 1200px; /* Largeur max */
+  max-height: 90vh; /* Hauteur max */
+  overflow-y: auto; /* Scroll si le contenu est trop grand */
+  position: relative;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+}
+
+/* Remplace le texte par un texte explicatif avec transition (pas de bulle) */
+#distance,
+#montées,
+#dplus {
+  position: relative;
+  cursor: default;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  transition: color 0.18s ease;
+ font-weight: bold;
+  
+}
+
+/* contenu des "tooltips" (remplacement) */
+#distance::after {
+  content: "Distance totale";
+}
+#montées::after {
+  content: "km de montées (+3%)";
+}
+#dplus::after {
+  content: "Dénivelé positif";
+}
+
+/* overlay centré qui remplace le texte d'origine */
+#distance::after,
+#montées::after,
+#dplus::after {
+  position: absolute;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  display: flex;
+  font:bold;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #ff9100;
+  padding: 0 6px;
+  white-space: nowrap;
+  font-size: 0.65em;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+  z-index: 10002;
+}
+
+/* désactive l'ancien petit triangle */
+#distance::before,
+#montées::before,
+#dplus::before {
+  display: none;
+}
+
+/* Sur hover / focus : on cache le texte d'origine et on affiche le remplacement */
+#distance:hover,
+#distance:focus,
+#montées:hover,
+#montées:focus,
+#dplus:hover,
+#dplus:focus {
+  color: transparent;
+}
+
+#distance:hover::after,
+#distance:focus::after,
+#montées:hover::after,
+#montées:focus::after,
+#dplus:hover::after,
+#dplus:focus::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.modal-back-btn {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: auto; /* Annule le width: 100% des autres boutons */
+  margin: 0;
+}
+
+.modal-back-btn:hover {
+  color: #fff;
+  background: none; /* Annule le hover orange */
+  transform: none;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: auto; /* Annule le width: 100% des autres boutons */
+  margin: 0;
+}
+.modal-close-btn:hover {
+  color: #fff;
+  background: none; /* Annule le hover orange */
+  transform: none;
+}
+
+/* Conteneur pour les "cartes" de graphiques */
+.graph-card-container {
+  display: flex;
+  flex-wrap: wrap; /* Passe à la ligne sur mobile */
+  gap: 20px;
+}
+
+.graph-card {
+  flex: 1; /* Les cartes se partagent l'espace */
+  min-width: 450px; /* Réduit la taille pour 2 colonnes */
+  max-height: 400px; /* NOUVEAU: Limite la hauteur du conteneur du graphique */
+  overflow: hidden; /* Empêche le débordement si le canvas s'agrandit */
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 15px;
+  border: 1px solid #333;
+}
+
+
+.graph-card h3 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 1.1em;
+  color: #ff9100;
+}
+
+#altitudeChartContainer {
+  /* Hauteur pour le graphique */
+  height: 180px; 
+  /* Fond qui matche la liste */
+  background: #1e1e1e; 
+  /* Bordure haute pour séparer de la carte */
+  border-top: 2px solid #333;
+  padding: 10px;
+  box-sizing: border-box; /* Pour que le padding soit inclus */
+  position: relative; /* Pour l'indicateur de position */
+}
+
+/* La "mini transition" */
+#altitudeChart {
+  transition: opacity 0.25s ease-in-out;
+}
+
+/* NOUVEAU: Indicateur de position sur le graphique */
+#chart-indicator {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #00d0ff; /* Bleu cyan */
+    pointer-events: none; /* Ne bloque pas le clic du graphique */
+    z-index: 10;
+    display: none; /* Caché par défaut */
+}
+
+/* === COULEURS DE PENTE POUR LA CARTE === */
+
+
+/* Mode 1 - Default scheme */
+.mode1 .pente-z6 { background: linear-gradient(90deg, #ff00ff, #ff00d4); }
+.mode1 .pente-z5 { background: linear-gradient(90deg, #660066, #4d0066); }
+.mode1 .pente-z4 { background: linear-gradient(90deg, #993366, #993352); }
+.mode1 .pente-z3 { background: linear-gradient(90deg, #996633, #995c33); }
+.mode1 .pente-z2 { background: linear-gradient(90deg, #999933, #998533); }
+.mode1 .pente-z1 { background: linear-gradient(90deg, #086135, #085241); }
+.mode1 .pente-d1 { background: linear-gradient(90deg, #336699, #335c99); }
+.mode1 .pente-d2 { background: linear-gradient(90deg, #001966, #001452); }
+
+/* Mode 2 - Red scheme */
+.mode2 .pente-z6 { background: linear-gradient(90deg, #4c0000, #3d0000); }
+.mode2 .pente-z5 { background: linear-gradient(90deg, #660000, #520000); }
+.mode2 .pente-z4 { background: linear-gradient(90deg, #991919, #991414); }
+.mode2 .pente-z3 { background: linear-gradient(90deg, #993333, #992929); }
+.mode2 .pente-z2 { background: linear-gradient(90deg, #994c4c, #994242); }
+.mode2 .pente-z1 { background: linear-gradient(90deg, #996666, #995c5c); }
+.mode2 .pente-d1 { background: linear-gradient(90deg, #997373, #996969); }
+.mode2 .pente-d2 { background: linear-gradient(90deg, #997979, #996f6f); }
+
+/* Mode 3 - Green scheme */
+.mode3 .pente-z6 { background: linear-gradient(90deg, #003300, #002900); }
+.mode3 .pente-z5 { background: linear-gradient(90deg, #004c00, #004200); }
+.mode3 .pente-z4 { background: linear-gradient(90deg, #196619, #145c14); }
+.mode3 .pente-z3 { background: linear-gradient(90deg, #339933, #2a8f2a); }
+.mode3 .pente-z2 { background: linear-gradient(90deg, #4c994c, #428f42); }
+.mode3 .pente-z1 { background: linear-gradient(90deg, #66cc66, #5cb85c); }
+.mode3 .pente-d1 { background: linear-gradient(90deg, #73e673, #69dc69); }
+.mode3 .pente-d2 { background: linear-gradient(90deg, #79f279, #6fe86f); }
+
+/* Mode 4 - Blue scheme */
+.mode4 .pente-z6 { background: linear-gradient(90deg, #00004c, #00003d); }
+.mode4 .pente-z5 { background: linear-gradient(90deg, #000066, #000052); }
+.mode4 .pente-z4 { background: linear-gradient(90deg, #1919cc, #1414b8); }
+.mode4 .pente-z3 { background: linear-gradient(90deg, #3333cc, #2929b8); }
+.mode4 .pente-z2 { background: linear-gradient(90deg, #4c4ccc, #4242b8); }
+.mode4 .pente-z1 { background: linear-gradient(90deg, #6666cc, #5c5cb8); }
+.mode4 .pente-d1 { background: linear-gradient(90deg, #7373e6, #6969dc); }
+.mode4 .pente-d2 { background: linear-gradient(90deg, #7979f2, #6f6fe8); }
+
+/* Mode 5 - High contrast */
+.mode5 .pente-z6 { background: linear-gradient(90deg, #000000, #0d0d0d); }
+.mode5 .pente-z5 { background: linear-gradient(90deg, #191919, #262626); }
+.mode5 .pente-z4 { background: linear-gradient(90deg, #333333, #404040); }
+.mode5 .pente-z3 { background: linear-gradient(90deg, #4c4c4c, #595959); }
+.mode5 .pente-z2 { background: linear-gradient(90deg, #666666, #737373); }
+.mode5 .pente-z1 { background: linear-gradient(90deg, #737373, #808080); }
+.mode5 .pente-d1 { background: linear-gradient(90deg, #797979, #868686); }
+.mode5 .pente-d2 { background: linear-gradient(90deg, #cccccc, #d9d9d9); }
+
+#downloadStageBtn:hover {
+  background: #0088e6;
+  transform: none;
+}
+
+/* --- NOUVEAUX STYLES POUR LA PAGE DE COMPARAISON --- */
+#comparisonTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+#comparisonTable thead th {
+  position: sticky; /* En-tête fixe */
+  top: 0;
+  background: #333;
+  color: #f2f2f2;
+  padding: 10px 8px;
+  font-size: 0.9em;
+  text-align: left;
+}
+#comparisonTable tbody tr {
+  border-bottom: 1px solid #2a2a2a;
+  transition: background-color 0.2s;
+}
+#comparisonTable tbody tr:hover {
+  background-color: #222;
+}
+#comparisonTable tbody td {
+  padding: 8px 8px;
+  text-align: center;
+}
+#comparisonTable tbody td:first-child,
+#comparisonTable tbody td:nth-child(2) {
+  text-align: left;
+  color: #ccc;
+  font-size: 0.9em;
+}
+
+/* Styles pour les notes */
+.score-good { 
+  color: #4CAF50; 
+  font-weight: bold;
+  font-size: 1.1em;
+}
+.score-medium { 
+  color: #FFC107; 
+}
+
+.score-bad { 
+  color: #F44336; 
+  font-weight: bold;
+}
+
+/* --- Styles for comparison map interactivity --- */
+#comparisonTable tbody tr.highlighted {
+  background-color: #004a7c; /* Blue highlight */
+  font-weight: bold;
+}
+#comparisonTable tbody tr.highlighted:hover {
+  background-color: #005a99;
+}
+
+.compare-tabs {
+  display: flex;
+  border-bottom: 2px solid #333;
+  margin-top: 10px;
+}
+.compare-tab-btn {
+  padding: 10px 15px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 0;
+  width: auto;
+}
+.compare-tab-btn.active {
+  color: #ff9100;
+  border-bottom: 2px solid #ff9100;
+}
+.compare-tab-btn:hover {
+  background: #2a2a2a;
+  transform: none;
+}
+.compare-content-pane {
+  display: none; /* Caché par défaut */
+  flex: 1;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.compare-content-pane.active {
+  display: flex; /* Rend le panneau actif visible */
+}
+
+#comparisonClimbTable tbody tr.highlighted:hover {
+  background-color: #005a99;
+}
+
+/* --- NOUVEAU: Dashboard des mini-profils de cols --- */
+#compare-climb-charts-container {
+  height: 40vh; /* Même hauteur que la carte */
+  max-height: 40vh;
+  background: #111; /* Fond plus sombre */
+  border-radius: 6px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+  z-index: 1;
+  
+  /* --- MODIFICATION: Logique de GRILLE 2xN --- */
+  display: grid; /* <-- 'flex' est devenu 'grid' */
+  grid-template-columns: repeat(2, 1fr); /* <-- 2 colonnes égales */
+  gap: 10px;
+  overflow-y: auto; /* <-- Défilement VERTICAL */
+  overflow-x: hidden;
+  padding: 10px;
+  box-sizing: border-box; /* S'assurer que le padding est inclus */
+}
+
+.mini-climb-profile-card {
+  /* width: 400px; <-- Supprimé, la grille gère la largeur */
+  /* flex-shrink: 0; <-- Supprimé */
+  height: 250px; /* <-- Hauteur fixe pour chaque carte */
+  background: #1e1e1e;
+  border-radius: 8px;
+  margin-right: 10px;
+  border: 1px solid #333;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  /* NOUVEAU: Empêche le "shrink" bizarre */
+  min-width: 0; 
+}
+
+.mini-climb-profile-card:hover {
+  background-color: #2a2a2a;
+
+}
+
+/* Styles pour le tableau des cols (identique au tableau des segments) */
+#comparisonClimbTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+#comparisonClimbTable thead th {
+  position: sticky; top: 0; background: #333; color: #f2f2f2;
+  padding: 10px 8px; font-size: 0.9em; text-align: left;
+}
+#comparisonClimbTable tbody tr {
+  border-bottom: 1px solid #2a2a2a;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+#comparisonClimbTable tbody tr:hover {
+  background-color: #2a2a2a;
+}
+#comparisonClimbTable tbody td {
+  padding: 10px 8px;
+  text-align: center;
+}
+/* Style pour la première colonne (Nom, Dist, D+) */
+#comparisonClimbTable tbody td:first-child {
+  text-align: left;
+  line-height: 1.4;
+  font-size: 0.95em;
+}
+#comparisonClimbTable tbody tr.highlighted {
+  background-color: #004a7c;
+  font-weight: bold;
+}
+#comparisonClimbTable tbody tr.highlighted:hover {
+  background-color: #005a99;
+}
+
+
+.mini-climb-profile-card {
+  flex-shrink: 0;
+  height: 100%;
+  background: #1e1e1e;
+  border-radius: 8px;
+  margin-right: 10px;
+  border: 1px solid #333;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+.mini-climb-profile-card:hover {
+  background-color: #2a2a2a;
+  border-color: #ff9100;
+}
+.mini-climb-profile-card h4 {
+  margin: 0 0 5px 0;
+  color: #f2f2f2;
+  font-size: 1em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mini-climb-profile-canvas-container {
+  flex: 1;
+  width: 100%;
+  position: relative; /* Nécessaire pour Chart.js */
+}
+
+#colDetailModal .graph-card {
+    min-width: 900px;  /* Report de l'ancien style inline */
+    height: 500px;     /* Nouvelle hauteur fixe */
+    max-height: none;  /* Annule la limite de 400px de .graph-card */
+}
+
+.gpx-library-controls {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 15px;
+}
+.gpx-library-controls #importGpxBtn {
+  width: auto;
+  background: #0077cc;
+}
+.gpx-library-controls p {
+  margin-top: 15px;
+  color: #ccc;
+}
+
+
+#gpxLibraryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+#openLibraryBtn {
+  width: 15%;
+  margin-left: 10%;
+}
+
+
+#gpxLibraryList li {
+  background: #2a2a2a;
+  border-radius: 6px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#gpxLibraryList .gpx-name {
+  font-weight: 600;
+  color: #f2f2f2;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+#gpxLibraryList .gpx-name:hover {
+  color: #ff9100;
+}
+
+#gpxLibraryList .gpx-actions button {
+  width: auto;
+  margin: 0 0 0 10px;
+  padding: 5px 10px;
+  font-size: 0.9em;
+}
+
+#gpxLibraryList .gpx-actions .delete-gpx {
+  background: #c00;
+}
+.modal-library {
+    max-width: 1200px !important;
+    width: 95vw !important;
+    height: 85vh;        /* Hauteur fixe relative à l'écran */
+    max-height: 900px;   /* Maximum raisonnable */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;    /* Empêche la modale globale de scroller */
+    padding: 20px;       /* Un peu de marge interne */
+}
+
+.modal-library h2,
+.library-tabs,
+.library-toolbar,
+#library-stats-bar {
+    flex-shrink: 0; /* Empêche ces éléments de s'écraser */
+}
+
+.library-toolbar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
+}
+
+.action-btn {
+    background: #0077cc;
+    width: auto;
+    padding: 8px 16px;
+    font-size: 1em;
+}
+.action-btn:hover { background: #0088e6; }
+
+/* Grille de cartes */
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    padding: 15px 5px;
+    
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    
+    /* CORRECTION: Forcer une hauteur fixe pour chaque ligne */
+    grid-auto-rows: 280px; /* Hauteur fixe pour toutes les cartes */
+}
+
+.library-grid::-webkit-scrollbar {
+    width: 8px;
+}
+.library-grid::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 4px;
+}
+.library-grid::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+.library-grid::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+/* Carte GPX individuelle */
+.gpx-card {
+    background: #2a2a2a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    
+    /* CORRECTION: Hauteur fixe à 100% de la cellule grid */
+    height: 100%;
+    
+    /* CORRECTION: Structure flex robuste */
+    justify-content: space-between;
+}
+
+.gpx-card:hover {
+    border-color: #ff9100;
+    transform: translateY(-3px);
+}
+
+.gpx-card-header {
+    background: #1e1e1e;
+    padding: 12px 15px;
+    font-weight: 600;
+    color: #f2f2f2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid #333;
+    flex-shrink: 0; /* IMPORTANT: Ne jamais rétrécir */
+}
+
+.gpx-card-body {
+    padding: 15px;
+    
+    /* CORRECTION: Flex grow pour prendre l'espace disponible */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+    /* CORRECTION: Permet le scroll interne si nécessaire */
+    min-height: 0;
+    overflow: hidden;
+}
+
+.gpx-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.gpx-stats-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.gpx-stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: #ccc;
+    font-size: 0.95em;
+}
+.stat-value {
+    font-weight: bold;
+    color: #fff;
+}
+.stat-dist { color: #4CAF50; }
+.stat-elev { color: #ff9100; }
+
+.gpx-card-footer {
+    padding: 12px 15px;
+    background: #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #333;
+    
+    /* CORRECTION: Empêche ABSOLUMENT le rétrécissement */
+    flex-shrink: 0;
+    min-height: 50px;
+    box-sizing: border-box;
+    
+    /* CORRECTION: S'assurer qu'il reste en bas */
+    margin-top: auto;
+}
+
+.gpx-card-footer .btn-load, 
+.gpx-card-footer .btn-delete {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    border: none;
+    cursor: pointer;
+    margin-top: 0;
+    width: auto;
+    flex-shrink: 0; /* Les boutons ne rétrécissent pas */
+}
+
+.gpx-card-footer .btn-load { 
+    background: #4CAF50; 
+    color: white; 
+}
+.gpx-card-footer .btn-load:hover { 
+    background: #45a049; 
+}
+
+.gpx-card-footer .btn-delete { 
+    background: transparent; 
+    color: #c00; 
+    border: 1px solid #c003; 
+}
+.gpx-card-footer .btn-delete:hover { 
+    background: #c003; 
+}
+
+/* AJOUT: Conteneur pour les boutons dans le footer */
+.gpx-card-footer .footer-buttons {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0; /* IMPORTANT */
+}
+
+.gpx-date {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.btn-load, .btn-delete {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    border: none;
+    cursor: pointer;
+    margin-top: 0; /* Override global button margin */
+    width: auto;
+}
+.btn-load { background: #4CAF50; color: white; }
+.btn-load:hover { background: #45a049; }
+.btn-delete { background: transparent; color: #c00; border: 1px solid #c003; }
+.btn-delete:hover { background: #c003; }
+
+
+.library-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #333;
+}
+
+.lib-tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    color: #888;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    margin-top: 0; /* Override du style global button */
+    width: auto;
+}
+
+.lib-tab-btn:hover {
+    color: #ccc;
+    background: #2a2a2a;
+    transform: none;
+}
+
+.lib-tab-btn.active {
+    color: #ff9100;
+    border-bottom-color: #ff9100;
+}
+
+/* Ajustement de la toolbar pour qu'elle soit plus compacte sous les onglets */
+.library-toolbar {
+    border-bottom: none; /* On enlève la bordure car les stats bar en auront une */
+    margin-bottom: 0;
+    padding-bottom: 10px;
+}
+
+/* --- STYLES POUR LA PAGE D'ANALYSE --- */
+
+.analysis-tabs {
+    display: flex;
+}
+.analysis-tab-btn {
+    padding: 15px 20px;
+    background: transparent;
+    border: none;
+    color: #888;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+.analysis-tab-btn:hover {
+    color: #ccc;
+    background: #2a2a2a;
+}
+.analysis-tab-btn.active {
+    color: #ff9100;
+    border-bottom-color: #ff9100;
+}
+.analysis-content {
+    display: none;
+    height: 100%;
+}
+.analysis-content.active {
+    display: block;
+}
+
+/* Grille de stats Hero */
+.stats-grid-hero {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+.stat-hero-card {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #333;
+}
+.hero-icon {
+    font-size: 2.5em;
+    opacity: 0.8;
+}
+.hero-data h3 {
+    font-size: 1.8em;
+    margin: 0;
+    color: #f2f2f2;
+}
+.hero-data p {
+    margin: 5px 0 0 0;
+    color: #888;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Cartes génériques d'analyse */
+.analysis-card {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #333;
+}
+.analysis-card h3 {
+    margin-top: 0;
+    color: #ccc;
+    font-size: 1.2em;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+.sub-stat-label {
+    color: #888;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+.sub-stat-value {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+/* Cartes "Best Efforts" */
+.best-effort-card {
+    background: linear-gradient(145deg, #222, #1a1a1a);
+    flex: 1;
+    min-width: 150px;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #333;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.best-effort-card h4 {
+    margin: 0 0 10px 0;
+    color: #ff9100;
+    font-size: 1.1em;
+}
+.best-effort-card .effort-value {
+    font-size: 2.2em;
+    font-weight: 800;
+    color: #fff;
+}
+.best-effort-card .effort-details {
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+/* Mini grille pour les cartes compactes */
+.stats-grid-compact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 10px; /* Row gap 15px, Col gap 10px */
+    margin-top: 15px;
+}
+.stats-grid-compact div {
+    display: flex;
+    flex-direction: column;
+}
+.stats-grid-compact span {
+    font-size: 0.85em;
+    color: #888;
+}
+.stats-grid-compact strong {
+    font-size: 1.2em;
+    color: #f2f2f2;
+}
